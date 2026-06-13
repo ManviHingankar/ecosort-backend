@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: ecosort-backend
+    runtime: docker
+    plan: free
+    envVars:
+      - key: MONGODB_URI
+        sync: false
+      - key: MAIL_USERNAME
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
