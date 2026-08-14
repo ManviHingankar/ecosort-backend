@@ -1,6 +1,7 @@
 package com.ecosort.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,12 @@ public class EmailService {
 
     @Autowired
     private JavaMailSender mailSender;
+
+    @Value("${spring.mail.username:}")
+    private String mailUsername;
+
+    @Value("${spring.mail.from:}")
+    private String mailFrom;
 
     public void sendRegistrationEmail(String toEmail, String name) {
 
@@ -26,7 +33,7 @@ public class EmailService {
                         "Regards,\nEcoSort Team"
         );
 
-        message.setFrom("ecosort.project1@gmail.com");
+        message.setFrom(getSenderEmail());
 
         mailSender.send(message);
     }
@@ -47,8 +54,12 @@ public class EmailService {
                         "EcoSort Team ♻"
         );
 
-        message.setFrom("ecosort.project1@gmail.com");
+        message.setFrom(getSenderEmail());
 
         mailSender.send(message);
+    }
+
+    private String getSenderEmail() {
+        return mailFrom == null || mailFrom.isBlank() ? mailUsername : mailFrom;
     }
 }
