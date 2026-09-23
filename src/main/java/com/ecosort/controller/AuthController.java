@@ -25,10 +25,10 @@ public class AuthController {
 
     // REGISTER
     @PostMapping("/register")
-    public String registerUser(@RequestBody User user) {
+    public ResponseEntity<Map<String, String>> registerUser(@RequestBody User user) {
 
         if (userRepository.existsByEmail(user.getEmail())) {
-            return "Email already registered!";
+            return ResponseEntity.badRequest().body(Map.of("message", "Email already registered!"));
         }
 
         if (user.getRole() == null || user.getRole().isBlank()) {
@@ -37,10 +37,13 @@ public class AuthController {
 
         userRepository.save(user);
 
-        // SEND EMAIL
-        emailService.sendRegistrationEmail(user.getEmail(), user.getName());
+        try {
+            emailService.sendRegistrationEmail(user.getEmail(), user.getName());
+        } catch (Exception error) {
+            System.out.println("Registration email failed: " + error.getMessage());
+        }
 
-        return "User Registered Successfully";
+        return ResponseEntity.ok(Map.of("message", "User Registered Successfully"));
     }
 
     @PostMapping("/login")
